@@ -39,6 +39,24 @@ function ArScene({ onClose }) {
     };
   }, [arStatus]);
 
+  // Release the webcam when the AR view unmounts. AR.js injects its <video>
+  // element straight into <body>, so React never cleans it up on its own —
+  // without this the camera light stays on and re-entering AR can show black.
+  useEffect(() => {
+    return () => {
+      document
+        .querySelectorAll("video")
+        .forEach((video) => {
+          const stream = video.srcObject;
+          if (stream && typeof stream.getTracks === "function") {
+            stream.getTracks().forEach((track) => track.stop());
+          }
+          video.srcObject = null;
+          if (video.parentNode) video.parentNode.removeChild(video);
+        });
+    };
+  }, []);
+
   return (
     <main className="ar-shell">
       <div className="ar-topbar">
@@ -68,11 +86,14 @@ function ArScene({ onClose }) {
           embedded
           vr-mode-ui="enabled: false"
           loading-screen="enabled: false"
-          renderer="logarithmicDepthBuffer: true;"
+          renderer="logarithmicDepthBuffer: true; alpha: true;"
           arjs="trackingMethod: best; sourceType: webcam; debugUIEnabled: false;"
         >
           <a-assets>
-            <a-asset-item id="krathong-model" src={`${ASSET_ROOT}/asset.gltf`} />
+            <a-asset-item
+              id="krathong-model"
+              src={`${ASSET_ROOT}/asset.gltf`}
+            />
           </a-assets>
           <a-marker
             ref={markerRef}
@@ -93,8 +114,14 @@ function ArScene({ onClose }) {
           <a-entity camera />
         </a-scene>
       )}
-      {arStatus === "loading" && <div className="ar-loading">Starting AR camera...</div>}
-      {arStatus === "error" && <div className="ar-loading">AR.js could not start. Please refresh and try again.</div>}
+      {arStatus === "loading" && (
+        <div className="ar-loading">Starting AR camera...</div>
+      )}
+      {arStatus === "error" && (
+        <div className="ar-loading">
+          AR.js could not start. Please refresh and try again.
+        </div>
+      )}
     </main>
   );
 }

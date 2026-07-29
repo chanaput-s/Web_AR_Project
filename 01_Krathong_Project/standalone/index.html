@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, user-scalable=no"
+    />
+    <meta name="theme-color" content="#0b1218" />
+    <title>The Lost Wish | Loy Krathong AR Mystery</title>
+    <link rel="stylesheet" href="styles.css" />
+
+    <!-- A-Frame + AR.js (CDN — no build step required) -->
+    <script src="https://aframe.io/releases/1.6.0/aframe.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@ar-js-org/ar.js@3.4.8/aframe/build/aframe-ar.js"></script>
+  </head>
+  <body>
+    <!-- Intro -->
+    <main id="intro-screen">
+      <section class="intro-card">
+        <span class="intro-eyebrow">Loy Krathong · AR Mystery</span>
+        <h1>The Lost Wish</h1>
+        <p>
+          Point your camera at the lotus marker to summon a krathong from the
+          river. Tap it to hear whispers from Phra Mae Khongkha and uncover a
+          wish that never reached the water.
+        </p>
+        <button id="start-ar" class="btn-primary" type="button">
+          Begin the ritual
+        </button>
+        <p class="intro-note">
+          Best on mobile Chrome or Safari · HTTPS or localhost required for camera
+        </p>
+      </section>
+    </main>
+
+    <!-- AR experience -->
+    <section id="ar-screen" class="hidden" aria-label="Augmented reality view">
+      <a-scene
+        embedded
+        vr-mode-ui="enabled: false"
+        loading-screen="enabled: false"
+        renderer="logarithmicDepthBuffer: true; colorManagement: true;"
+        arjs="trackingMethod: best; sourceType: webcam; debugUIEnabled: false;"
+      >
+        <a-assets>
+          <a-asset-item
+            id="krathong-asset"
+            src="assets/models/krathong.gltf"
+          ></a-asset-item>
+        </a-assets>
+
+        <!--
+          Pattern marker: place marker.patt in assets/markers/
+          Raycaster + cursor on the marker make child entities tappable on touch.
+        -->
+        <a-marker
+          id="krathong-marker"
+          type="pattern"
+          preset="custom"
+          url="assets/markers/marker.patt"
+          raycaster="objects: .clickable"
+          emitevents="true"
+          cursor="fuse: false; rayOrigin: mouse;"
+        >
+          <a-entity
+            id="krathong-model"
+            class="clickable"
+            gltf-model="#krathong-asset"
+            position="0 0 0"
+            scale="4.18 4.18 4.18"
+          ></a-entity>
+        </a-marker>
+
+        <a-entity camera></a-entity>
+      </a-scene>
+
+      <div class="ar-hud">
+        <div class="ar-topbar">
+          <button
+            id="close-ar"
+            class="btn-icon"
+            type="button"
+            aria-label="Close AR experience"
+          >
+            ✕
+          </button>
+          <div id="tracking-pill" class="tracking-pill">
+            <span class="tracking-dot"></span>
+            <span id="tracking-label">Looking for marker</span>
+          </div>
+        </div>
+        <div id="ar-help" class="ar-help">
+          Point your camera at the printed lotus marker
+        </div>
+      </div>
+    </section>
+
+    <!-- Storybook overlay -->
+    <aside id="story-overlay" class="hidden" aria-live="polite">
+      <article class="story-panel">
+        <header class="story-meta">
+          <span id="story-chapter" class="story-chapter"></span>
+          <span id="story-progress" class="story-progress"></span>
+        </header>
+        <p id="story-speaker" class="story-speaker"></p>
+        <p id="story-text" class="story-text"></p>
+        <div class="story-actions">
+          <button id="story-close" class="btn-ghost" type="button">Close</button>
+          <button id="story-next" class="btn-secondary" type="button">
+            Continue
+          </button>
+        </div>
+      </article>
+    </aside>
+
+    <script src="script.js"></script>
+  </body>
+</html>
