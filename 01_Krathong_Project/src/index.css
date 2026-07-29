@@ -81,3 +81,21 @@
     text-shadow: 0 0 18px rgba(242, 193, 78, 0.55), 0 0 48px rgba(255, 154, 60, 0.25);
   }
 }
+
+/*
+ * AR.js injects its own <video id="arjs-video"> and <canvas class="a-canvas">
+ * elements outside of React's control and sizes them with inline styles based
+ * on the camera's native resolution. Tailwind's Preflight reset
+ * (video { max-width: 100%; height: auto }) then shrinks that video down to a
+ * small box instead of letting it fill the screen - that's the tiny
+ * top-left camera preview. Force both elements to cover the viewport.
+ */
+#arjs-video,
+.a-canvas {
+  position: fixed !important;
+  inset: 0 !important;
+  width: 100vw !important;
+  height: 100vh !important;
+  max-width: none !important;
+  object-fit: cover !important;
+}

@@ -78,7 +78,11 @@ function ArExperience() {
   }, [scriptStatus])
 
   return (
-    <div className="relative h-svh w-full overflow-hidden bg-krathong-night">
+    <div
+      className={`relative h-svh w-full overflow-hidden ${
+        arStatus === 'loading' ? 'bg-krathong-night' : 'bg-transparent'
+      }`}
+    >
       <div ref={containerRef} className="absolute inset-0" />
       <ArOverlay status={arStatus} />
     </div>
