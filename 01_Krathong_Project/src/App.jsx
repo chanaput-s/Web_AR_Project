@@ -72,7 +72,10 @@ function ArScene({ onClose }) {
           arjs="trackingMethod: best; sourceType: webcam; debugUIEnabled: false;"
         >
           <a-assets>
-            <a-asset-item id="krathong-model" src={`${ASSET_ROOT}/asset.gltf`} />
+            <a-asset-item
+              id="krathong-model"
+              src={`${ASSET_ROOT}/asset.gltf`}
+            />
           </a-assets>
           <a-marker
             ref={markerRef}
@@ -93,8 +96,14 @@ function ArScene({ onClose }) {
           <a-entity camera />
         </a-scene>
       )}
-      {arStatus === "loading" && <div className="ar-loading">Starting AR camera...</div>}
-      {arStatus === "error" && <div className="ar-loading">AR.js could not start. Please refresh and try again.</div>}
+      {arStatus === "loading" && (
+        <div className="ar-loading">Starting AR camera...</div>
+      )}
+      {arStatus === "error" && (
+        <div className="ar-loading">
+          AR.js could not start. Please refresh and try again.
+        </div>
+      )}
     </main>
   );
 }
