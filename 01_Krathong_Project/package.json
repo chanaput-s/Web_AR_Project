@@ -9,8 +9,10 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@ar-js-org/ar.js": "^3.4.8",
     "@tailwindcss/vite": "latest",
     "@vitejs/plugin-react": "latest",
+    "aframe": "1.6.0",
     "lucide-react": "latest",
     "react": "latest",
     "react-dom": "latest",
