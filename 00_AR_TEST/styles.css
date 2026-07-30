@@ -1,0 +1,276 @@
+/* ══════════════════════════════════════════════════════════════
+   Loy Krathong AR — styles
+   The .krathong-frame overlay is purely cosmetic. It uses
+   pointer-events:none and sits above the AR canvas, so webcam
+   tracking, the marker, and gesture-handler taps on the model all
+   keep working normally.
+   ══════════════════════════════════════════════════════════════ */
+
+:root {
+    --kf-gold: #d9a64a;
+    --kf-gold-lite: #f0c86e;
+    --kf-gold-pale: #fdf3d6;
+    --kf-red: #9a433c;
+    --kf-red-dark: #6f3034;
+}
+
+body { margin: 0; overflow: hidden; }
+
+/* The AR scene fills the viewport */
+a-scene { position: fixed; inset: 0; width: 100%; height: 100%; }
+
+/* ── Decorative overlay layer ── */
+.krathong-frame {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    pointer-events: none;   /* never blocks AR interaction */
+    overflow: hidden;
+    font-family: "Segoe UI", "Sarabun", sans-serif;
+}
+
+/* Soft vignette so the ornaments read against a bright camera feed */
+.krathong-frame::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background:
+        radial-gradient(120% 90% at 50% 0%, rgba(13,23,38,.55), transparent 45%),
+        radial-gradient(120% 90% at 50% 100%, rgba(13,23,38,.6), transparent 45%);
+}
+
+/* ── Festival title ribbon ── */
+.kf-title {
+    position: absolute;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    text-align: center;
+    color: var(--kf-gold-pale);
+    text-shadow: 0 0 12px rgba(217,166,74,.8);
+    z-index: 2;
+}
+.kf-title .kf-th {
+    display: block;
+    font-size: clamp(22px, 6vw, 34px);
+    font-weight: 700;
+    letter-spacing: .04em;
+    color: var(--kf-gold-lite);
+}
+.kf-title .kf-en {
+    display: block;
+    margin-top: 2px;
+    font-size: 10px;
+    letter-spacing: .42em;
+    text-transform: uppercase;
+    color: rgba(245,239,225,.85);
+}
+
+/* ── Gold rules inset from each edge ── */
+.kf-edge {
+    position: absolute;
+    box-shadow: 0 0 12px rgba(217,166,74,.55);
+    animation: kfGlow 4s ease-in-out infinite;
+}
+.kf-edge-top, .kf-edge-bottom {
+    left: 20px; right: 20px; height: 2px;
+    background: linear-gradient(90deg, transparent, rgba(217,166,74,.9) 12%, rgba(240,200,110,.95) 50%, rgba(217,166,74,.9) 88%, transparent);
+}
+.kf-edge-left, .kf-edge-right {
+    top: 20px; bottom: 20px; width: 2px;
+    background: linear-gradient(180deg, transparent, rgba(217,166,74,.9) 12%, rgba(240,200,110,.95) 50%, rgba(217,166,74,.9) 88%, transparent);
+}
+.kf-edge-top { top: 20px; }
+.kf-edge-bottom { bottom: 20px; }
+.kf-edge-left { left: 20px; }
+.kf-edge-right { right: 20px; animation-delay: .8s; }
+
+/* ── Lai-thai style corner flourishes ── */
+.kf-corner {
+    position: absolute;
+    width: 78px; height: 78px;
+    border: 0 solid var(--kf-gold-lite);
+    filter: drop-shadow(0 0 6px rgba(217,166,74,.6));
+}
+.kf-corner::before {
+    content: "";
+    position: absolute;
+    width: 28px; height: 28px;
+    border: 2px solid rgba(217,166,74,.9);
+    border-radius: 0 0 100% 0;
+}
+.kf-corner::after {
+    content: "";
+    position: absolute;
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    background: radial-gradient(circle, var(--kf-gold-lite) 0 40%, transparent 62%);
+}
+.kf-corner-tl { top: 16px; left: 16px; border-top-width: 3px; border-left-width: 3px; border-top-left-radius: 22px; }
+.kf-corner-tl::before { top: 7px; left: 7px; transform: rotate(180deg); }
+.kf-corner-tl::after  { top: 3px; left: 3px; }
+.kf-corner-tr { top: 16px; right: 16px; border-top-width: 3px; border-right-width: 3px; border-top-right-radius: 22px; }
+.kf-corner-tr::before { top: 7px; right: 7px; transform: rotate(-90deg); }
+.kf-corner-tr::after  { top: 3px; right: 3px; }
+.kf-corner-bl { bottom: 16px; left: 16px; border-bottom-width: 3px; border-left-width: 3px; border-bottom-left-radius: 22px; }
+.kf-corner-bl::before { bottom: 7px; left: 7px; transform: rotate(90deg); }
+.kf-corner-bl::after  { bottom: 3px; left: 3px; }
+.kf-corner-br { bottom: 16px; right: 16px; border-bottom-width: 3px; border-right-width: 3px; border-bottom-right-radius: 22px; }
+.kf-corner-br::before { bottom: 7px; right: 7px; transform: rotate(0deg); }
+.kf-corner-br::after  { bottom: 3px; right: 3px; }
+
+/* ── Full moon glow (festival is on the full-moon night) ── */
+.kf-moon {
+    position: absolute;
+    top: 74px; right: 46px;
+    width: 66px; height: 66px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 50% 45%, var(--kf-gold-pale) 0 44%, rgba(240,200,110,.5) 68%, transparent 80%);
+    box-shadow: 0 0 40px rgba(240,200,110,.6);
+    animation: kfMoon 6s ease-in-out infinite;
+}
+
+/* ── Lotus medallions, centered top & bottom ── */
+.kf-lotus {
+    position: absolute;
+    left: 50%;
+    width: 54px; height: 54px;
+    transform: translateX(-50%);
+    filter: drop-shadow(0 0 8px rgba(217,166,74,.6));
+    animation: kfLotus 5s ease-in-out infinite;
+}
+.kf-lotus-top { top: 64px; }
+.kf-lotus-bottom { bottom: 26px; animation-delay: 1.6s; }
+.kf-lotus-petal {
+    position: absolute;
+    left: 50%; top: 50%;
+    width: 14px; height: 26px;
+    margin: -13px 0 0 -7px;
+    background: linear-gradient(180deg, var(--kf-gold-lite), var(--kf-red));
+    border-radius: 50% 50% 50% 50% / 62% 62% 38% 38%;
+    transform-origin: 50% 100%;
+}
+.kf-lotus-petal:nth-child(1) { transform: rotate(0deg)   translateY(-8px); }
+.kf-lotus-petal:nth-child(2) { transform: rotate(72deg)  translateY(-8px); }
+.kf-lotus-petal:nth-child(3) { transform: rotate(144deg) translateY(-8px); }
+.kf-lotus-petal:nth-child(4) { transform: rotate(216deg) translateY(-8px); }
+.kf-lotus-petal:nth-child(5) { transform: rotate(288deg) translateY(-8px); }
+.kf-lotus-core {
+    position: absolute;
+    left: 50%; top: 50%;
+    width: 16px; height: 16px;
+    margin: -8px 0 0 -8px;
+    border-radius: 50%;
+    background: radial-gradient(circle, var(--kf-gold-pale) 0 45%, var(--kf-gold) 70%);
+}
+
+/* ── Drifting krathong lanterns with candle flames ── */
+.kf-lantern {
+    position: absolute;
+    width: 30px; height: 22px;
+    background: linear-gradient(180deg, var(--kf-red), var(--kf-red-dark));
+    border: 1px solid var(--kf-gold);
+    border-radius: 6px 6px 26px 26px;
+    box-shadow: 0 4px 0 var(--kf-red-dark), 0 0 14px rgba(217,166,74,.4);
+    animation: kfDrift 7s ease-in-out infinite;
+}
+.kf-lantern::before {   /* rim of the krathong */
+    content: "";
+    position: absolute;
+    top: -5px; left: -3px; right: -3px;
+    height: 8px;
+    border: 1px solid var(--kf-gold);
+    border-radius: 50%;
+    background: var(--kf-red);
+}
+.kf-flame {
+    position: absolute;
+    left: 50%; top: -14px;
+    width: 8px; height: 16px;
+    transform: translateX(-50%);
+    background: radial-gradient(circle at 50% 70%, var(--kf-gold-pale), var(--kf-gold-lite) 60%, transparent 75%);
+    border-radius: 60% 40% 60% 40%;
+    box-shadow: 0 0 12px rgba(240,200,110,.95);
+    animation: kfFlame 1.5s ease-in-out infinite alternate;
+}
+.kf-lantern-a { left: 10%; bottom: 60px; }
+.kf-lantern-b { left: 32%; bottom: 44px; animation-delay: 1.7s; }
+.kf-lantern-c { right: 16%; bottom: 66px; animation-delay: 3.1s; }
+.kf-lantern-d { right: 34%; bottom: 40px; animation-delay: 4.6s; }
+
+/* ── Falling lotus petals ── */
+.kf-petal {
+    position: absolute;
+    width: 13px; height: 19px;
+    background: linear-gradient(180deg, var(--kf-gold-lite), var(--kf-red));
+    border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+    opacity: 0;
+    animation: kfPetalFall 9s linear infinite;
+}
+.kf-petal-a { left: 18%; animation-delay: 0s; }
+.kf-petal-b { left: 34%; animation-delay: 1.6s; }
+.kf-petal-c { left: 52%; animation-delay: 3.4s; }
+.kf-petal-d { left: 67%; animation-delay: 5s; }
+.kf-petal-e { left: 80%; animation-delay: 6.4s; }
+.kf-petal-f { left: 45%; animation-delay: 7.8s; }
+
+/* ── Floating sparks / fireflies ── */
+.kf-spark {
+    position: absolute;
+    width: 5px; height: 5px;
+    border-radius: 50%;
+    background: var(--kf-gold-pale);
+    box-shadow: 0 0 10px 2px rgba(240,200,110,.9);
+    opacity: 0;
+    animation: kfSpark 5s ease-in-out infinite;
+}
+.kf-spark-a { left: 22%; bottom: 30%; animation-delay: 0s; }
+.kf-spark-b { left: 44%; bottom: 46%; animation-delay: 1.3s; }
+.kf-spark-c { left: 63%; bottom: 34%; animation-delay: 2.5s; }
+.kf-spark-d { left: 78%; bottom: 50%; animation-delay: 3.6s; }
+.kf-spark-e { left: 34%; bottom: 58%; animation-delay: 4.4s; }
+
+/* ── River shimmer along the bottom ── */
+.kf-river {
+    position: absolute;
+    left: 50%;
+    height: 2px;
+    transform: translateX(-50%);
+    background: linear-gradient(90deg, transparent, rgba(149,182,201,.55), transparent);
+    transform-origin: center;
+    animation: kfRipple 4s ease-in-out infinite;
+}
+.kf-river-1 { width: 62%; bottom: 74px; }
+.kf-river-2 { width: 46%; bottom: 56px; animation-delay: 1s; }
+.kf-river-3 { width: 30%; bottom: 40px; animation-delay: 2s; }
+
+/* ── Keyframes ── */
+@keyframes kfGlow   { 0%,100% { opacity: .78; } 50% { opacity: 1; } }
+@keyframes kfMoon   { 0%,100% { box-shadow: 0 0 32px rgba(240,200,110,.45); } 50% { box-shadow: 0 0 48px rgba(240,200,110,.75); } }
+@keyframes kfLotus  { 0%,100% { transform: translateX(-50%) scale(.94) rotate(0deg); opacity: .9; } 50% { transform: translateX(-50%) scale(1.06) rotate(36deg); opacity: 1; } }
+@keyframes kfDrift  { 0%,100% { transform: translate(0,0) rotate(-3deg); } 50% { transform: translate(12px,-12px) rotate(3deg); } }
+@keyframes kfFlame  { from { transform: translateX(-50%) rotate(10deg) scale(.9); opacity: .75; } to { transform: translateX(-50%) rotate(-8deg) scale(1.12); opacity: 1; } }
+@keyframes kfPetalFall {
+    0%   { top: -4%; opacity: 0; transform: translateX(0) rotate(0deg); }
+    12%  { opacity: .85; }
+    88%  { opacity: .85; }
+    100% { top: 104%; opacity: 0; transform: translateX(48px) rotate(240deg); }
+}
+@keyframes kfSpark  { 0%,100% { opacity: 0; transform: translateY(0) scale(.6); } 50% { opacity: 1; transform: translateY(-16px) scale(1); } }
+@keyframes kfRipple { 0%,100% { opacity: .2; transform: translateX(-50%) scaleX(.8); } 50% { opacity: .7; transform: translateX(-50%) scaleX(1); } }
+
+/* ── Smaller screens ── */
+@media (max-width: 640px) {
+    .kf-corner { width: 54px; height: 54px; }
+    .kf-corner::before { width: 20px; height: 20px; }
+    .kf-moon { width: 48px; height: 48px; top: 66px; right: 34px; }
+    .kf-lotus { width: 42px; height: 42px; }
+    .kf-title .kf-th { font-size: 24px; }
+    .kf-edge-left, .kf-edge-right { animation: none; }
+}
+
+/* Respect users who prefer reduced motion */
+@media (prefers-reduced-motion: reduce) {
+    .krathong-frame * { animation: none !important; }
+    .kf-petal, .kf-spark { opacity: .55; }
+}

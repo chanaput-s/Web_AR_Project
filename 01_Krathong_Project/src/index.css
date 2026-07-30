@@ -45,10 +45,80 @@ h1 em { color: #d9a64a; font-weight: 400; }
 .footer-stat { display: flex; align-items: baseline; gap: 8px; }.footer-stat strong { color: #d9a64a; font-family: Georgia, serif; font-size: 20px; font-weight: 400; }.footer-rule { width: 44px; height: 1px; background: rgba(245,239,225,.25); }.footer-credit { margin-left: auto; font-size: 11px; color: #748091; }
 
 .ar-shell { position: fixed; inset: 0; overflow: hidden; background: #05080d; }.ar-shell a-scene { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 0; }
-/* AR.js injects its webcam <video> straight into <body>; force it to fill the
-   screen and sit behind the transparent WebGL canvas so the camera feed shows. */
-#arjs-video, video.arjs-video, .a-canvas ~ video, body > video { position: fixed !important; inset: 0 !important; top: 0 !important; left: 0 !important; width: 100vw !important; height: 100vh !important; object-fit: cover !important; z-index: 0 !important; display: block !important; }
-.ar-shell .a-canvas, .ar-shell canvas.a-canvas { position: absolute !important; inset: 0 !important; width: 100% !important; height: 100% !important; background: transparent !important; z-index: 1 !important; }.ar-topbar, .ar-help, .ar-loading { position: absolute; z-index: 4; }.ar-topbar { top: 0; left: 0; right: 0; height: 78px; padding: 0 20px; display: flex; align-items: center; gap: 14px; background: rgba(5,8,13,.65); border-bottom: 1px solid rgba(255,255,255,.15); }.icon-button { width: 40px; height: 40px; display: grid; place-items: center; color: #f5efe1; background: transparent; border: 1px solid rgba(255,255,255,.28); }.ar-title { display: flex; flex-direction: column; gap: 4px; }.ar-title strong { font-family: Georgia, serif; font-size: 18px; font-weight: 400; }.ar-title .eyebrow { color: #d9a64a; }.tracking-pill { margin-left: auto; padding: 8px 11px; display: flex; align-items: center; gap: 8px; color: #b7c1cd; font-size: 11px; border: 1px solid rgba(255,255,255,.22); }.tracking-pill.is-found { color: #d9a64a; border-color: #d9a64a; }.tracking-dot { width: 7px; height: 7px; background: #8e9baa; border-radius: 50%; animation: blink 1.4s infinite; }.is-found .tracking-dot { background: #d9a64a; }.ar-help { left: 50%; bottom: 32px; transform: translateX(-50%); padding: 12px 16px; display: flex; align-items: center; gap: 9px; white-space: nowrap; color: #f5efe1; background: rgba(5,8,13,.7); border: 1px solid rgba(255,255,255,.22); font-size: 12px; }.ar-loading { top: 50%; left: 50%; transform: translate(-50%, -50%); padding: 16px 20px; color: #f5efe1; background: rgba(5,8,13,.82); border: 1px solid rgba(255,255,255,.25); font-size: 13px; }
+/* AR.js injects its webcam <video> into <body> and sizes the WebGL canvas to
+   the camera's aspect ratio. Center both and scale to COVER the viewport while
+   keeping their aspect ratio, so the feed fills the screen without spilling
+   off-center on any window size. Do NOT force exact 100vw x 100vh — that
+   stretches the feed and breaks AR.js's alignment. */
+#arjs-video, video.arjs-video, body > video,
+.a-canvas, canvas.a-canvas {
+  position: fixed !important;
+  top: 50% !important;
+  left: 50% !important;
+  transform: translate(-50%, -50%) !important;
+  min-width: 100% !important;
+  min-height: 100% !important;
+  width: auto !important;
+  height: auto !important;
+  max-width: none !important;
+  max-height: none !important;
+  margin: 0 !important;
+  object-fit: cover !important;
+  background: transparent !important;
+}
+#arjs-video, video.arjs-video, body > video { z-index: 0 !important; }
+.a-canvas, canvas.a-canvas { z-index: 1 !important; }.ar-topbar, .ar-help, .ar-loading { position: absolute; z-index: 4; }.ar-topbar { top: 0; left: 0; right: 0; height: 78px; padding: 0 20px; display: flex; align-items: center; gap: 14px; background: rgba(5,8,13,.65); border-bottom: 1px solid rgba(255,255,255,.15); }.icon-button { width: 40px; height: 40px; display: grid; place-items: center; color: #f5efe1; background: transparent; border: 1px solid rgba(255,255,255,.28); }.ar-title { display: flex; flex-direction: column; gap: 4px; }.ar-title strong { font-family: Georgia, serif; font-size: 18px; font-weight: 400; }.ar-title .eyebrow { color: #d9a64a; }.tracking-pill { margin-left: auto; padding: 8px 11px; display: flex; align-items: center; gap: 8px; color: #b7c1cd; font-size: 11px; border: 1px solid rgba(255,255,255,.22); }.tracking-pill.is-found { color: #d9a64a; border-color: #d9a64a; }.tracking-dot { width: 7px; height: 7px; background: #8e9baa; border-radius: 50%; animation: blink 1.4s infinite; }.is-found .tracking-dot { background: #d9a64a; }.ar-help { left: 50%; bottom: 32px; transform: translateX(-50%); padding: 12px 16px; display: flex; align-items: center; gap: 9px; white-space: nowrap; color: #f5efe1; background: rgba(5,8,13,.7); border: 1px solid rgba(255,255,255,.22); font-size: 12px; }.ar-loading { top: 50%; left: 50%; transform: translate(-50%, -50%); padding: 16px 20px; color: #f5efe1; background: rgba(5,8,13,.82); border: 1px solid rgba(255,255,255,.25); font-size: 13px; }
+
+/* --- Ornate gold Thai (Loy Krathong) decorative frame around the AR scene ---
+   The whole frame sits above the video/canvas (z-index 3, below the topbar/help
+   at z-index 4) and never intercepts pointer events, so AR tracking and the
+   close button keep working. */
+.ar-frame { position: absolute; inset: 0; z-index: 3; pointer-events: none; }
+
+/* Thin gold rules inset from each edge, with a soft glow. */
+.ar-frame-edge { position: absolute; background: linear-gradient(90deg, transparent, rgba(217,166,74,.85) 12%, rgba(240,200,110,.95) 50%, rgba(217,166,74,.85) 88%, transparent); box-shadow: 0 0 10px rgba(217,166,74,.5); animation: frameGlow 4s ease-in-out infinite; }
+.edge-top, .edge-bottom { left: 18px; right: 18px; height: 2px; }
+.edge-left, .edge-right { top: 18px; bottom: 18px; width: 2px; background: linear-gradient(180deg, transparent, rgba(217,166,74,.85) 12%, rgba(240,200,110,.95) 50%, rgba(217,166,74,.85) 88%, transparent); }
+.edge-top { top: 18px; } .edge-bottom { bottom: 18px; } .edge-left { left: 18px; } .edge-right { right: 18px; animation-delay: .8s; }
+
+/* Lai-thai style corner ornaments drawn with layered borders + a curl. */
+.ar-corner { position: absolute; width: 74px; height: 74px; border-style: solid; border-color: rgba(240,200,110,.95); border-width: 0; filter: drop-shadow(0 0 6px rgba(217,166,74,.5)); }
+.ar-corner::before { content: ""; position: absolute; width: 26px; height: 26px; border: 2px solid rgba(217,166,74,.9); border-radius: 0 0 100% 0; }
+.ar-corner::after { content: ""; position: absolute; width: 9px; height: 9px; background: radial-gradient(circle, #f0c86e 0 40%, transparent 60%); border-radius: 50%; }
+.corner-tl { top: 14px; left: 14px; border-top-width: 3px; border-left-width: 3px; border-top-left-radius: 20px; }
+.corner-tl::before { top: 6px; left: 6px; transform: rotate(180deg); } .corner-tl::after { top: 3px; left: 3px; }
+.corner-tr { top: 14px; right: 14px; border-top-width: 3px; border-right-width: 3px; border-top-right-radius: 20px; }
+.corner-tr::before { top: 6px; right: 6px; transform: rotate(-90deg); } .corner-tr::after { top: 3px; right: 3px; }
+.corner-bl { bottom: 14px; left: 14px; border-bottom-width: 3px; border-left-width: 3px; border-bottom-left-radius: 20px; }
+.corner-bl::before { bottom: 6px; left: 6px; transform: rotate(90deg); } .corner-bl::after { bottom: 3px; left: 3px; }
+.corner-br { bottom: 14px; right: 14px; border-bottom-width: 3px; border-right-width: 3px; border-bottom-right-radius: 20px; }
+.corner-br::before { bottom: 6px; right: 6px; transform: rotate(0deg); } .corner-br::after { bottom: 3px; right: 3px; }
+
+/* Full moon glow, high center — the festival is held on the full-moon night. */
+.ar-moon { position: absolute; top: 60px; left: 50%; transform: translateX(-50%); width: 54px; height: 54px; border-radius: 50%; background: radial-gradient(circle at 50% 45%, #fdf3d6 0 42%, rgba(240,200,110,.55) 66%, transparent 78%); box-shadow: 0 0 32px rgba(240,200,110,.55); animation: moonGlow 6s ease-in-out infinite; }
+
+/* Lotus medallions centered top & bottom on the gold rule. */
+.ar-lotus { position: absolute; left: 50%; transform: translateX(-50%); display: grid; place-items: center; width: 44px; height: 44px; color: #f0c86e; background: radial-gradient(circle, rgba(154,67,60,.9) 0 55%, rgba(154,67,60,0) 72%); border-radius: 50%; filter: drop-shadow(0 0 8px rgba(217,166,74,.55)); animation: lotusPulse 5s ease-in-out infinite; }
+.lotus-top { top: 6px; } .lotus-bottom { bottom: 6px; animation-delay: 1.6s; }
+
+/* Small krathong lanterns drifting near the lower edge. */
+.ar-lantern-float { position: absolute; width: 26px; height: 20px; background: #9a433c; border: 1px solid #d9a64a; border-radius: 6px 6px 22px 22px; box-shadow: 0 4px 0 #6f3034, 0 0 12px rgba(217,166,74,.35); animation: drift 7s ease-in-out infinite; }
+.ar-lantern-float .float-flame { position: absolute; left: 50%; top: -9px; width: 6px; height: 14px; transform: translateX(-50%); background: #f0c86e; border-radius: 60% 40% 60% 40%; box-shadow: 0 0 10px rgba(240,200,110,.9); animation: floatFlame 1.5s ease-in-out infinite alternate; }
+.lantern-a { left: 12%; bottom: 40px; } .lantern-b { left: 46%; bottom: 30px; animation-delay: 2.3s; } .lantern-c { right: 14%; bottom: 46px; animation-delay: 4.1s; }
+
+/* Drifting lotus petals for atmosphere. */
+.ar-petal { position: absolute; width: 12px; height: 18px; background: linear-gradient(180deg, #f0c86e, #b2533e); border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%; opacity: .0; animation: petalFall 9s linear infinite; }
+.petal-a { left: 24%; animation-delay: 0s; } .petal-b { left: 58%; animation-delay: 3s; } .petal-c { left: 78%; animation-delay: 5.5s; } .petal-d { left: 40%; animation-delay: 7.2s; }
+
+@keyframes frameGlow { 0%,100% { opacity: .75; } 50% { opacity: 1; } }
+@keyframes moonGlow { 0%,100% { box-shadow: 0 0 28px rgba(240,200,110,.45); } 50% { box-shadow: 0 0 40px rgba(240,200,110,.7); } }
+@keyframes lotusPulse { 0%,100% { transform: translateX(-50%) scale(.94); opacity: .85; } 50% { transform: translateX(-50%) scale(1.06); opacity: 1; } }
+@keyframes drift { 0%,100% { transform: translate(0, 0) rotate(-3deg); } 50% { transform: translate(10px, -10px) rotate(3deg); } }
+@keyframes petalFall { 0% { top: 8%; opacity: 0; transform: translateX(0) rotate(0deg); } 10% { opacity: .8; } 90% { opacity: .8; } 100% { top: 88%; opacity: 0; transform: translateX(40px) rotate(220deg); } }
+@keyframes floatFlame { from { transform: translateX(-50%) rotate(12deg) scale(.9); opacity: .7; } to { transform: translateX(-50%) rotate(-9deg) scale(1.1); opacity: 1; } }
 
 @keyframes breathe { 0%,100% { transform: scale(.96); opacity: .65; } 50% { transform: scale(1.04); opacity: 1; } } @keyframes float { 0%,100% { transform: translateY(8px); } 50% { transform: translateY(-8px); } } @keyframes flame { from { transform: rotate(12deg) scale(.9); opacity: .7; } to { transform: rotate(-9deg) scale(1.1); opacity: 1; } } @keyframes ripple { 0%,100% { opacity: .15; transform: scaleX(.8); } 50% { opacity: .7; transform: scaleX(1); } } @keyframes blink { 50% { opacity: .25; } }
-@media (max-width: 800px) { .site-nav { height: 68px; }.nav-season { display: none; }.intro-grid { min-height: calc(100vh - 132px); grid-template-columns: 1fr; gap: 10px; padding-top: 44px; padding-bottom: 25px; }.intro-art { min-height: 300px; margin-top: -10px; }.art-rings { width: min(80vw, 390px); }.art-lantern { transform: scale(.75); margin-top: -30px; }.art-caption { right: 8%; bottom: 15px; }.intro-footer { gap: 10px; padding-top: 12px; padding-bottom: 12px; }.footer-credit { display: none; }.footer-rule { width: 20px; }.ar-help { bottom: 18px; max-width: calc(100vw - 30px); text-align: center; white-space: normal; }.ar-topbar { padding: 0 12px; }.tracking-pill { font-size: 0; padding: 10px; }.tracking-pill .tracking-dot { margin: 0; } }
+@media (max-width: 800px) { .site-nav { height: 68px; }.nav-season { display: none; }.intro-grid { min-height: calc(100vh - 132px); grid-template-columns: 1fr; gap: 10px; padding-top: 44px; padding-bottom: 25px; }.intro-art { min-height: 300px; margin-top: -10px; }.art-rings { width: min(80vw, 390px); }.art-lantern { transform: scale(.75); margin-top: -30px; }.art-caption { right: 8%; bottom: 15px; }.intro-footer { gap: 10px; padding-top: 12px; padding-bottom: 12px; }.footer-credit { display: none; }.footer-rule { width: 20px; }.ar-help { bottom: 18px; max-width: calc(100vw - 30px); text-align: center; white-space: normal; }.ar-topbar { padding: 0 12px; }.tracking-pill { font-size: 0; padding: 10px; }.tracking-pill .tracking-dot { margin: 0; }
+  .ar-corner { width: 52px; height: 52px; } .ar-corner::before { width: 18px; height: 18px; }
+  .ar-moon { top: 88px; width: 42px; height: 42px; } .ar-lotus { width: 36px; height: 36px; }
+  .edge-top, .edge-left { animation: none; } }

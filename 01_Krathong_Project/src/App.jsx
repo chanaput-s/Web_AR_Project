@@ -39,6 +39,16 @@ function ArScene({ onClose }) {
     };
   }, [arStatus]);
 
+  // AR.js measures the camera source once on start. Fire a couple of resize
+  // events after the scene is ready so it recomputes the video/canvas size and
+  // centers the feed correctly (also handles rotating the device).
+  useEffect(() => {
+    if (arStatus !== "ready") return undefined;
+    const nudge = () => window.dispatchEvent(new Event("resize"));
+    const timers = [setTimeout(nudge, 250), setTimeout(nudge, 1000)];
+    return () => timers.forEach(clearTimeout);
+  }, [arStatus]);
+
   // Release the webcam when the AR view unmounts. AR.js injects its <video>
   // element straight into <body>, so React never cleans it up on its own —
   // without this the camera light stays on and re-entering AR can show black.
@@ -80,6 +90,43 @@ function ArScene({ onClose }) {
       <div className="ar-help">
         <ScanLine size={18} />
         <span>Point your camera at the supplied marker</span>
+      </div>
+      {/* Ornate gold Thai festival frame around the AR scene. Purely decorative:
+          pointer-events are disabled so camera/marker interaction is untouched. */}
+      <div className="ar-frame" aria-hidden="true">
+        <span className="ar-frame-edge edge-top" />
+        <span className="ar-frame-edge edge-bottom" />
+        <span className="ar-frame-edge edge-left" />
+        <span className="ar-frame-edge edge-right" />
+
+        <span className="ar-corner corner-tl" />
+        <span className="ar-corner corner-tr" />
+        <span className="ar-corner corner-bl" />
+        <span className="ar-corner corner-br" />
+
+        <span className="ar-moon" />
+
+        <span className="ar-lotus lotus-top">
+          <Flower2 size={26} strokeWidth={1.1} />
+        </span>
+        <span className="ar-lotus lotus-bottom">
+          <Flower2 size={26} strokeWidth={1.1} />
+        </span>
+
+        <span className="ar-lantern-float lantern-a">
+          <span className="float-flame" />
+        </span>
+        <span className="ar-lantern-float lantern-b">
+          <span className="float-flame" />
+        </span>
+        <span className="ar-lantern-float lantern-c">
+          <span className="float-flame" />
+        </span>
+
+        <span className="ar-petal petal-a" />
+        <span className="ar-petal petal-b" />
+        <span className="ar-petal petal-c" />
+        <span className="ar-petal petal-d" />
       </div>
       {arStatus === "ready" && (
         <a-scene
